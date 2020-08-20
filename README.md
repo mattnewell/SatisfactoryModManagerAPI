@@ -1,3 +1,3 @@
-# Satisfactory Mod Manager API
+# Satisfactory Mod Manager AP
 
 API which handles install and uninstall of Satisfactory mods and mod loader
