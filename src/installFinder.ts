@@ -188,6 +188,15 @@ async function getInstallsWindows(): Promise<InstallFindResult> {
 }
 
 export async function getInstalls(): Promise<InstallFindResult> {
-  // TODO: other OSes
-  return getInstallsWindows();
+  if (process.platform === 'win32') {
+    return getInstallsWindows();
+  }
+  throw new Error('Method only used for win32');
+}
+
+export async function getInstall(install: SatisfactoryInstall) {
+  const installs: Array<SatisfactoryInstall> = [];
+  const invalidInstalls: Array<string> = [];
+  installs.push(install);
+  return { installs, invalidInstalls };
 }

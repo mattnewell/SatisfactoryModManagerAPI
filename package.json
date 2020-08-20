@@ -10,7 +10,7 @@
     "build:ts": "tsc",
     "build": "yarn lint:fix && node-gyp build && yarn build:ts",
     "debug": "nodemon --watch src/ -e ts --exec yarn test:debug || exit 1",
-    "test": "yarn build && node test/test.js",
+    "test": "jest",
     "test:debug": "yarn build && cross-env NODE_DEBUG=SMManagerAPI node test/test.js",
     "prepublishOnly": "yarn test",
     "install": "node-gyp rebuild --silent"
@@ -45,6 +45,8 @@
     "eslint-import-resolver-typescript": "^2.0.0",
     "eslint-plugin-import": "^2.19.1",
     "husky": "^4.0.10",
+    "@types/jest": "^26.0.10",
+    "jest": "^26.4.1",
     "typescript": "^3.7.4"
   },
   "dependencies": {
