@@ -205,14 +205,8 @@ export async function getInstalls(): Promise<InstallFindResult> {
 
 export async function getInstallSteamLinux(steamPath: string): Promise<InstallFindResult> {
   try {
-    // const steamPath = path.dirname((await getRegValue(Registry.HKCU, '\\Software\\Valve\\Steam', 'SteamExe')).value);
-    const steamAppsPath = path.join(steamPath, 'steamapps');
-    // const libraryfoldersManifest = vdf.parse(fs.readFileSync(path.join(steamAppsPath, 'libraryfolders.vdf'), 'utf8')) as SteamLibraryFoldersManifest;
-    // const libraryfolders = Object.entries(libraryfoldersManifest.LibraryFolders).filter(([key]) => /^\d+$/.test(key)).map((entry) => entry[1]);
-    // libraryfolders.push(steamPath);
     const installs: Array<SatisfactoryInstall> = [];
     const invalidInstalls: Array<string> = [];
-    // await Promise.all(libraryfolders.map(async (libraryFolder) => {
     const sfManifestPath = path.join(steamPath, 'steamapps', 'appmanifest_526870.acf');
     if (fs.existsSync(sfManifestPath)) {
       const manifest = vdf.parse(fs.readFileSync(sfManifestPath, 'utf8')) as SteamManifest;
