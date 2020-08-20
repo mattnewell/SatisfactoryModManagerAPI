@@ -11,7 +11,7 @@
     "build": "yarn lint:fix && node-gyp build && yarn build:ts",
     "debug": "nodemon --watch src/ -e ts --exec yarn test:debug || exit 1",
     "test": "jest",
-    "test:debug": "yarn build && cross-env NODE_DEBUG=SMManagerAPI node test/test.js",
+    "test:debug": "yarn build && cross-env NODE_DEBUG=SMManagerAPI node test/original-tests.js",
     "prepublishOnly": "yarn test",
     "install": "node-gyp rebuild --silent"
   },
