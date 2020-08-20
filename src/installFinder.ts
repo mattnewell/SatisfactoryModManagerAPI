@@ -193,10 +193,52 @@ export async function getInstalls(): Promise<InstallFindResult> {
   }
   throw new Error('Method only used for win32');
 }
+//
+// export async function getInstallLinux(steamPath: string) {
+//   return getInstallSteamLinux(steamPath);
+//
+//   // const installs: Array<SatisfactoryInstall> = [];
+//   // const invalidInstalls: Array<string> = [];
+//   // installs.push(install);
+//   // return { installs, invalidInstalls };
+// }
 
-export async function getInstall(install: SatisfactoryInstall) {
-  const installs: Array<SatisfactoryInstall> = [];
-  const invalidInstalls: Array<string> = [];
-  installs.push(install);
-  return { installs, invalidInstalls };
+export async function getInstallSteamLinux(steamPath: string): Promise<InstallFindResult> {
+  try {
+    // const steamPath = path.dirname((await getRegValue(Registry.HKCU, '\\Software\\Valve\\Steam', 'SteamExe')).value);
+    const steamAppsPath = path.join(steamPath, 'steamapps');
+    // const libraryfoldersManifest = vdf.parse(fs.readFileSync(path.join(steamAppsPath, 'libraryfolders.vdf'), 'utf8')) as SteamLibraryFoldersManifest;
+    // const libraryfolders = Object.entries(libraryfoldersManifest.LibraryFolders).filter(([key]) => /^\d+$/.test(key)).map((entry) => entry[1]);
+    // libraryfolders.push(steamPath);
+    const installs: Array<SatisfactoryInstall> = [];
+    const invalidInstalls: Array<string> = [];
+    // await Promise.all(libraryfolders.map(async (libraryFolder) => {
+    const sfManifestPath = path.join(steamPath, 'steamapps', 'appmanifest_526870.acf');
+    if (fs.existsSync(sfManifestPath)) {
+      const manifest = vdf.parse(fs.readFileSync(sfManifestPath, 'utf8')) as SteamManifest;
+      const fullInstallPath = path.join(steamPath, 'steamapps', 'common', manifest.AppState.installdir);
+      const gameExe = path.join(fullInstallPath, 'FactoryGame', 'Binaries', 'Win64', 'FactoryGame-Win64-Shipping.exe');
+      if (!fs.existsSync(gameExe)) {
+        invalidInstalls.push(fullInstallPath);
+      }
+      const gameVersion = await getGameVersionFromExe(gameExe);
+      installs.push(new SatisfactoryInstall(
+        `${manifest.AppState.name} ${manifest.AppState.UserConfig.betakey?.toLowerCase() === 'experimental' ? 'Experimental' : 'Early Access'} (Steam)`,
+        gameVersion,
+        manifest.AppState.UserConfig.betakey || 'EA',
+        fullInstallPath,
+        'steam://rungameid/526870',
+      ));
+    }
+    exiftool.end();
+    return { installs, invalidInstalls };
+  } catch (e) {
+    if ((e as Error).message.includes('unable to find')) {
+      debug('Steam is not installed');
+    } else {
+      error(e);
+    }
+    exiftool.end();
+    return { installs: [], invalidInstalls: [] };
+  }
 }

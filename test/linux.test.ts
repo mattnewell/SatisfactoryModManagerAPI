@@ -1,5 +1,6 @@
-// const sum = require('./sum');
+import {getInstallSteamLinux} from "../src/installFinder";
 
-test('adds 1 + 2 to equal 3', () => {
-    expect(1 + 2).toBe(3);
+test('can get install', () => {
+  return getInstallSteamLinux('/home/steam-data').then(data =>
+    expect(data.installs.length).toEqual(1))
 });
